@@ -10,6 +10,7 @@
 #'
 #' @return harmonize object
 #' @export
+#' @rdname userHarmony
 #' @importFrom dplyr bind_rows everything filter mutate select
 #' @importFrom tidyr pivot_longer separate_wider_delim unite
 #' @importFrom purrr transpose

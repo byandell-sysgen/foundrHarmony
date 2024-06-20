@@ -14,8 +14,9 @@ linkpath <- function(dataset, links) {
   
   (dplyr::filter(links, .data$shortname == dataset))$address
 }
-#' Title
+#' Link datasets
 #'
+#' Side effects to save RDS `datasets` data frame and `help.md` about file.
 #' @param object data frame
 #' @param linkfile CSV file with shortname, URL, longname
 #' @param deployDir directory with `help.Rmd` for `help.md`

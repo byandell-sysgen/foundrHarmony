@@ -2,7 +2,7 @@
 % Please edit documentation in R/linkpath.R
 \name{link_datasets}
 \alias{link_datasets}
-\title{Title}
+\title{Link datasets}
 \usage{
 link_datasets(object, linkfile, deployDir = "deploy")
 }
@@ -17,5 +17,5 @@ link_datasets(object, linkfile, deployDir = "deploy")
 invisible
 }
 \description{
-Title
+Side effects to save RDS `datasets` data frame and `help.md` about file.
 }

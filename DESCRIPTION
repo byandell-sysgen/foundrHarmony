@@ -1,6 +1,6 @@
 Package: foundrHarmony
-Version: 0.5.0
-Date: 2024-06-19
+Version: 0.5.1
+Date: 2024-06-20
 Title: Multiparent Founder Harmonizing Tools
 Description: Tools to harmonize founder data for multiparent genetic crosses.
 Authors@R: c(person("Brian S Yandell",
@@ -9,7 +9,8 @@ Authors@R: c(person("Brian S Yandell",
 Depends:
     R (>= 4.2.0)
 Imports:
-    dplyr, purrr, readr, rlang, rmarkdown, stringr, tibble, tidyr
+    dplyr, foundr, purrr, readr, readxl, rlang, rmarkdown, stringr, tibble,
+    tidyr
 License: GPL-3
 Encoding: UTF-8
 RoxygenNote: 7.3.1

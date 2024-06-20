@@ -13,6 +13,7 @@
 #' @export
 #' @importFrom dplyr filter
 #' @importFrom rlang .data
+#' @importFrom foundr partition strainstats
 #'
 harmonize <- function(dataset, links, userHarmony, ...,
                       normalize = TRUE,
@@ -28,11 +29,11 @@ harmonize <- function(dataset, links, userHarmony, ...,
   # Always run stats on normalized data.
   if(normalize) {
     traitData <- normalscores(traitData)
-    traitStats <- strainstats(traitData,
-                              condition_name = condition_name)
+    traitStats <- foundr::strainstats(traitData,
+      condition_name = condition_name)
   } else {
-    traitStats <- strainstats(normalscores(traitData),
-                              condition_name = condition_name)
+    traitStats <- foundr::strainstats(normalscores(traitData),
+      condition_name = condition_name)
   }
   
   # Reduce to traits that can produce valid stats.
@@ -94,7 +95,7 @@ harmonize <- function(dataset, links, userHarmony, ...,
   saveRDS(traitData, file.path(dataset, paste0(dataset, "Data.rds")))
   
   cat("Running partition of traits ...\n", stderr())
-  traitSignal <- partition(traitData)
+  traitSignal <- foundr::partition(traitData)
   saveRDS(traitSignal, file.path(dataset, paste0(dataset, "Signal.rds")))
   
   invisible()

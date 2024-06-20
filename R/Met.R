@@ -13,27 +13,30 @@
 #' @param skiprows number of rows to skip
 #' @param ... ignore
 #'
-#' @return data frame with columns for strain, sex, animal, condition, trait, value
+#' @return data frame with columns for strain,sex,animal,condition,trait,value
 #' @export
+#' @rdname userHarmony
+#' @importFrom dplyr left_join mutate select
+#' @importFrom tidyr pivot_longer unite
+#' @importFrom readxl read_excel
+#' @importFrom rlang .data
 #'
 MetHarmony <- function(dataset, links, annot, skiprows = 4, ...) {
   filename <- linkpath(dataset, links)
 
   out <-
-    # Data are in sheet 1 starting on line 5.
-    read_excel(filename, sheet = 1, skip = skiprows) %>%
-    
     # Pivot traits, which begin in column 5.
-    pivot_longer(-(compound:data_type),
-                 names_to = "mouse_id", values_to = "value")
+    tidyr::pivot_longer(
+      # Data are in sheet 1 starting on line 5.
+      readxl::read_excel(filename, sheet = 1, skip = skiprows),
+      -(compound:data_type), names_to = "mouse_id", values_to = "value")
   
   # Some data has minute embedded in `mouse_id`.
   if(is_minute <- any(str_detect(out$mouse_id, "min"))) {
-    out <- out %>%
-      mutate(minute = str_replace(mouse_id, ".*_(\\d+)min.*", "\\1"))
+    out <- dplyr::mutate(out,
+      minute = str_replace(mouse_id, ".*_(\\d+)min.*", "\\1"))
   }
-  out <- out %>%
-    mutate(mouse_id = str_remove(mouse_id, "_.*"))
+  out <- dplyr::mutate(out, mouse_id = str_remove(.data$mouse_id, "_.*"))
     
   # Join with `annot` to get strain, number, sex, diet
   out <- dplyr::left_join(out, annot, by = "mouse_id")
@@ -41,20 +44,18 @@ MetHarmony <- function(dataset, links, annot, skiprows = 4, ...) {
   # If `minute` in data, add to `trait` name and append `week`.
   # Assume here measurements are at 18 week (sacrifice).
   if(is_minute) {
-    out <- out %>%
-      unite(compound, compound, minute) %>%
-      mutate(compound = paste0(compound, "_18wk"))
+    out <- dplyr::mutate(
+      tidyr::unite(out, compound, compound, minute),
+      compound = paste0(.data$compound, "_18wk"))
   }
-  out %>%  
-    # Rename `compound` as `trait`, number as `animal`
-    rename(
-      trait = "compound",
-      animal = "number",
-      condition = "diet") %>%
-    mutate(
-      # Make sure animal is character.
-      animal = as.character(animal)) %>%
 
+  dplyr::select(
+    dplyr::mutate(
+      # Rename `compound` as `trait`, number as `animal`
+      dplyr::rename(out, trait = "compound", animal = "number",
+        condition = "diet"),
+      # Make sure animal is character.
+      animal = as.character(.data$animal)),
     # These are harmonized columns and their names.
-    select(strain, sex, animal, condition, trait, value)
+    strain, sex, animal, condition, trait, value)
 }
